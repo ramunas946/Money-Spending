@@ -1,0 +1,9 @@
+delete 
+questions:
+
+
+1:
+when table has to go before other table gets error because (laravel errno 150 foreign key constraint is incorrectly formed)
+becuse table isnt created and attempts to get info from not already created table.
+
+2:
