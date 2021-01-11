@@ -23,7 +23,9 @@ Route::group(['middleware' => ['auth']], function() {
 
 //Graphs controller
 
-Route::get('money_update/{id}','GraphController@edit');
+Route::get('money_edit/{id}','GraphController@edit');
+Route::post('money_update/{id}','GraphController@update');
+Route::post('money_goal','GraphController@goal');
 
 //Expensis controller
 Route::post('money_create','ExpensesController@store');

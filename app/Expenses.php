@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Expenses extends Model
 {
     protected $fillable = [
-        'user_id','expenses','money'
+        'user_id','expenses','money','goal'
     ];
     public function user()
     {

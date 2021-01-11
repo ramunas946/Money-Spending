@@ -38,7 +38,8 @@ class ExpensesController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'money' => 'required|gt:0|lte:2147483647',
+            'money' => 'required|gt:-1|lte:2147483647',
+            'goal' => 'required|gt:-1|lte:2147483647',
         ]);
         $user = auth()->user();
         $list = Expenses::where('user_id', $user->id)->get();
@@ -51,6 +52,7 @@ class ExpensesController extends Controller
         $money = new Expenses;
         $money->expenses = request('expenses');
         $money->money = request('money');
+        $money->goal = request('goal');
         $money->user_id = $user->id;
         if ($endmoney + $money->money >$income->money ) {
             return redirect('money')->with('message','insificent money');

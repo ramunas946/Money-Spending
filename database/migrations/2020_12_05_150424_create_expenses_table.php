@@ -19,6 +19,7 @@ class CreateExpensesTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('expenses')->nullable();
             $table->integer('money')->nullable();
+            $table->integer('goal')->nullable();
             $table->timestamps();
         });
     }

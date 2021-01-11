@@ -7,6 +7,8 @@ use App\User;
 use App\Expenses;
 use App\Graphs;
 use App\Income;
+use Hamcrest\Core\HasToString;
+use Illuminate\Support\Facades\Session;
 
 class GraphController extends Controller
 {
@@ -15,12 +17,11 @@ class GraphController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        
+
         $curentTime = \Carbon\Carbon::now()->isoFormat('Y-M-D');
         $user = auth()->user();
-
         $income = Graphs::where('user_id', $user->id)->first('money');
         $spendings = Expenses::where('user_id', $user->id)->get();
         $listincome = Income::where('user_id', $user->id)->get();
@@ -30,15 +31,15 @@ class GraphController extends Controller
             $endmoney += $x->money;
         }
         $endmoney = $income->money - $endmoney;
-        
+
 
         $options = [
-            'curentTime'=> $curentTime,
+            'curentTime' => $curentTime,
             'user' => $user,
-            'income'=>$income,
+            'income' => $income,
             'spendings' => $spendings,
-            'listincome'=>$listincome,
-            'monthleyEarnings'=>$monthleyEarnings,
+            'listincome' => $listincome,
+            'monthleyEarnings' => $monthleyEarnings,
             'endmoney' => $endmoney,
         ];
         return view('mainpage', $options);
@@ -85,7 +86,7 @@ class GraphController extends Controller
     public function edit(Request $request, $id)
     {
         $spendings = Income::where('user_id', $id)->get();
-        
+
         $addedmoney = 0;
         foreach ($spendings as $x) {
             $addedmoney += $x->money;
@@ -93,10 +94,9 @@ class GraphController extends Controller
         $data = Graphs::find($id);
         $data->money = $addedmoney;
         $data->save();
-        
+
 
         return redirect('money');
-        
     }
 
     /**
@@ -108,7 +108,13 @@ class GraphController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
+        $data = Expenses::find($id);
+        $add = Expenses::find($id);
+
+        $data->money = request('money') + $add->money;
+
+        $data->save();
+        return redirect('money');
     }
 
     /**
@@ -120,5 +126,20 @@ class GraphController extends Controller
     public function destroy($id)
     {
         //
+    }
+    public function goal(Request $request)
+    {
+        $user = auth()->user();
+        $monthleyEarnings = Income::where('user_id', $user->id)->get();
+        $result = 0;
+        $goal = (int)$request->input('goal');
+        $goal_money = $request->input('goal_money');
+        foreach ($monthleyEarnings as $x) {
+            $result = $result + $x->money;
+        }
+        $results = (round($goal_money / $goal));
+
+
+        return redirect('money')->with('goal', $results);
     }
 }
